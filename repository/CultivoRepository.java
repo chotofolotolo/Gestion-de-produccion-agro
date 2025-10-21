@@ -6,10 +6,14 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
 import java.sql.Date;
 
 import com.myproyect.miproyect.model.CultivoModel;
 
+@Repository
 public class CultivoRepository extends STDRespository implements CultivoRepositoryInterface {
 
     public CultivoRepository() {
@@ -144,8 +148,8 @@ public class CultivoRepository extends STDRespository implements CultivoReposito
             pstmt.setDate(2, Date.valueOf(cultivo.getFechaEstimadaCosecha()));
             pstmt.setInt(3, cultivo.getIdCultivo());
 
-            int filasAfectadas = pstmt.executeUpdate();
-            if (filasAfectadas > 0) {
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
                 return cultivo;
             } else {
                 return null;
