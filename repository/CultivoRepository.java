@@ -30,7 +30,7 @@ public class CultivoRepository extends STDRespository implements CultivoReposito
             ResultSet resultSet = pstmt.executeQuery();
 
             while (resultSet.next()) {
-                Date fechaDeSiembraSQL = resultSet.getDate("fecha_siembra");
+                Date fechaDeSiembraSQL = resultSet.getDate("fecha_de_siembra");
                 Date fechaEstimadaCosechaSQL = resultSet.getDate("fecha_estimada_cosecha");
                 // PARSEO DE DATE(sql) A LOCALDATE(java)
                 LocalDate fechaDeSiembra = fechaDeSiembraSQL.toLocalDate();
@@ -65,7 +65,7 @@ public class CultivoRepository extends STDRespository implements CultivoReposito
             ResultSet resultSet = pstmt.executeQuery();
 
             while (resultSet.next()) {
-                Date fechaDeSiembraSQL = resultSet.getDate("fecha_siembra");
+                Date fechaDeSiembraSQL = resultSet.getDate("fecha_de_siembra");
                 Date fechaEstimadaCosechaSQL = resultSet.getDate("fecha_estimada_cosecha");
                 // PARSEO DE DATE(sql) A LOCALDATE(java)
                 LocalDate fechaDeSiembra = fechaDeSiembraSQL.toLocalDate();
