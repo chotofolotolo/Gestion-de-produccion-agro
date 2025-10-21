@@ -2,6 +2,7 @@ package com.myproyect.miproyect.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class CultivoRepository extends STDRespository implements CultivoReposito
                 LocalDate fechaEstimadaCosecha = fechaEstimadaCosechaSQL.toLocalDate();
 
                 cultivo = new CultivoModel(resultSet.getInt("id_cultivo"), resultSet.getInt("id_lote"),
-                        resultSet.getString("tipo_de_siembra"), resultSet.getString("variedad_de_semillas"),
+                        resultSet.getString("tipo_de_siembra"), resultSet.getString("variedad_de_semilla"),
                         fechaDeSiembra, fechaEstimadaCosecha,
                         resultSet.getString("estado_del_cultivo"));
 
@@ -66,8 +67,10 @@ public class CultivoRepository extends STDRespository implements CultivoReposito
                 LocalDate fechaDeSiembra = fechaDeSiembraSQL.toLocalDate();
                 LocalDate fechaEstimadaCosecha = fechaEstimadaCosechaSQL.toLocalDate();
 
-                cultivo = new CultivoModel(resultSet.getInt("id_cultivo"), resultSet.getInt("id_lote"),
-                        resultSet.getString("tipo_de_siembra"), resultSet.getString("variedad_de_semillas"),
+                cultivo = new CultivoModel(resultSet.getInt("id_cultivo"),
+                        resultSet.getInt("id_lote"),
+                        resultSet.getString("tipo_de_siembra"),
+                        resultSet.getString("variedad_de_semilla"),
                         fechaDeSiembra, fechaEstimadaCosecha,
                         resultSet.getString("estado_del_cultivo"));
             }
@@ -81,21 +84,28 @@ public class CultivoRepository extends STDRespository implements CultivoReposito
 
     @Override
     public CultivoModel agregarCultivo(CultivoModel cultivo) {
-        String query = "INSERT INTO cultivos(id_cultivo,tipo_de_siembra,variedad_de_semilla,fecha_de_siembra,fecha_estimada_cosecha,estado_del_cultivo,id_lote)VALUES(?,?,?,?,?,?,?)";
+        String query = "INSERT INTO cultivos(tipo_de_siembra,variedad_de_semilla,fecha_de_siembra,fecha_estimada_cosecha,estado_del_cultivo,id_lote)VALUES(?,?,?,?,?,?)";
 
         try {
-            pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, cultivo.getIdCultivo());
-            pstmt.setString(2, cultivo.getTipoDeSiembra());
-            pstmt.setString(3, cultivo.getVariedadDeSemilla());
-            pstmt.setDate(4, Date.valueOf(cultivo.getFechaDeSiembra()));
-            pstmt.setDate(5, Date.valueOf(cultivo.getFechaEstimadaCosecha()));
-            pstmt.setString(6, cultivo.getEstadoDelCultivo());
-            pstmt.setInt(7, cultivo.getIdLote());
+            pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);// RETURN_GENERATED_KEYS indica que
+                                                                                  // queremos recuperar el id
+                                                                                  // autogenerado
+            pstmt.setString(1, cultivo.getTipoDeSiembra());
+            pstmt.setString(2, cultivo.getVariedadDeSemilla());
+            pstmt.setDate(3, Date.valueOf(cultivo.getFechaDeSiembra()));
+            pstmt.setDate(4, Date.valueOf(cultivo.getFechaEstimadaCosecha()));
+            pstmt.setString(5, cultivo.getEstadoDelCultivo());
+            pstmt.setInt(6, cultivo.getIdLote());
 
             int affectedRows = pstmt.executeUpdate();
 
             if (affectedRows > 0) {
+                ResultSet generatedKeys = pstmt.getGeneratedKeys();// Recupera el id autogenerado
+                if (generatedKeys.next()) {
+                    int nuevoId = generatedKeys.getInt(1);// obtiene el id
+                    cultivo.setIdCultivo(nuevoId);
+                }
+
                 return cultivo;
             } else {
                 return null;
